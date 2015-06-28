@@ -7,7 +7,7 @@ before_install:
   sudo pip install codecov
 
 after_success:
-  codecov
+  - bash <(curl -s https://codecov.io/bash)
 
 cache:
   directories:
