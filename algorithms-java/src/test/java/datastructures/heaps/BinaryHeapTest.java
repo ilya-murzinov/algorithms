@@ -66,6 +66,19 @@ public class BinaryHeapTest {
     }
 
     @Test
+    public void testDeleteInteger2() throws Exception {
+        for (int i = 0; i < 1000; i++) {
+            integerBinaryHeap.add(1000 - i - 1);
+        }
+
+        for (int i = 0; i < 999; i++) {
+            integerBinaryHeap.deleteMin();
+        }
+
+        Assert.assertEquals(999, integerBinaryHeap.findMin(), 0);
+    }
+
+    @Test
     public void testDeleteString() throws Exception {
         stringBinaryHeap.add("aaaab");
         stringBinaryHeap.add("aaabb");
@@ -126,5 +139,14 @@ public class BinaryHeapTest {
         BinaryHeap<Object> heap = new BinaryHeap<>();
         heap.add(new Object());
         heap.add(new Object());
+    }
+
+    @Test
+    public void testToString() throws Exception {
+        BinaryHeap<Integer> heap = new BinaryHeap<>();
+        heap.add(1);
+        heap.add(2);
+        heap.add(3);
+        Assert.assertEquals("BinaryHeap: [1, 2, 3]", heap.toString());
     }
 }

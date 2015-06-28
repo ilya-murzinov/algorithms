@@ -172,8 +172,13 @@ public class BinaryHeap<T> implements PriorityQueue<T> {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("BinaryHeap: [");
         for (T element : elements) {
-            stringBuilder.append(element).append(" ");
+            if (element == null) {
+                break;
+            }
+
+            stringBuilder.append(element).append(", ");
         }
+        stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
         stringBuilder.append("]");
         return stringBuilder.toString();
     }
