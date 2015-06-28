@@ -6,5 +6,6 @@ before_install:
 after_success:
   codecov
 cache:
+  pip
   directories:
   - $HOME/.m2
