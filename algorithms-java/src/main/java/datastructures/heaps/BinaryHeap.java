@@ -19,6 +19,7 @@ public class BinaryHeap<T> implements PriorityQueue<T> {
         this(null);
     }
 
+    @SuppressWarnings("unchecked")
     public BinaryHeap(Comparator<T> comparator) {
         elements = (T[]) new Object[INITIAL_CAPACITY];
         this.size = 0;
@@ -144,6 +145,7 @@ public class BinaryHeap<T> implements PriorityQueue<T> {
         return 2 * parentIndex + 2;
     }
 
+    @SuppressWarnings("unchecked")
     private void ensureCapacity() {
         if (size == capacity) {
             T[] tmp = elements;
@@ -155,6 +157,7 @@ public class BinaryHeap<T> implements PriorityQueue<T> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void shrink() {
         if (capacity > INITIAL_CAPACITY && ((double) size) / capacity < 0.25) {
             T[] tmp = elements;

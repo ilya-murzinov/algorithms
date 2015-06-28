@@ -4,8 +4,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
-
 /**
  * @author Ilya Murzinov
  */
@@ -125,28 +123,8 @@ public class BinaryHeapTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testNonComparable() throws Exception {
-        BinaryHeap heap = new BinaryHeap();
+        BinaryHeap<Object> heap = new BinaryHeap<>();
         heap.add(new Object());
         heap.add(new Object());
-    }
-
-    @Test
-    public void testPerformance() throws Exception {
-        long[] times = new long[5];
-        times[0] = addElements(1000);
-        times[1] = addElements(10000);
-        times[2] = addElements(100000);
-        times[3] = addElements(1000000);
-        times[4] = addElements(10000000);
-        System.out.println(Arrays.toString(times));
-    }
-
-    private long addElements(long n) {
-        BinaryHeap<Long> heap = new BinaryHeap<>();
-        long millisecondsStart = System.currentTimeMillis();
-        for (int i = 0; i < n; i++) {
-            heap.add(n - i - 1);
-        }
-        return System.currentTimeMillis() - millisecondsStart;
     }
 }
