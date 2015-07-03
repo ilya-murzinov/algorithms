@@ -1,4 +1,4 @@
-package datastructures.heaps;
+package com.github.ilyamurzinov.datastructures.heaps;
 
 /**
  * @author Ilya Murzinov

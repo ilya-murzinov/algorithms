@@ -1,4 +1,4 @@
-package datastructures.heaps;
+package com.github.ilyamurzinov.datastructures.heaps;
 
 import java.util.Comparator;
 
@@ -9,7 +9,7 @@ public class BinaryHeap<T> implements PriorityQueue<T> {
 
     public static final int INITIAL_CAPACITY = 16;
 
-    private Comparator<T> comparator;
+    private final Comparator<T> comparator;
 
     private T[] elements;
     private int size;
@@ -107,9 +107,6 @@ public class BinaryHeap<T> implements PriorityQueue<T> {
     }
 
     private int compare(T element1, T element2) {
-        assert element1 != null;
-        assert element2 != null;
-
         if (comparator != null) {
             return comparator.compare(element1, element2);
         } else {
@@ -123,11 +120,6 @@ public class BinaryHeap<T> implements PriorityQueue<T> {
     }
 
     private void swap(int index1, int index2) {
-        assert index1 >= 0;
-        assert index1 < size;
-        assert index2 >= 0;
-        assert index2 < size;
-
         T tmp = elements[index1];
         elements[index1] = elements[index2];
         elements[index2] = tmp;

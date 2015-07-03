@@ -1,4 +1,4 @@
-package datastructures.heaps;
+package com.github.ilyamurzinov.datastructures.heaps;
 
 import org.junit.Assert;
 import org.junit.Before;
