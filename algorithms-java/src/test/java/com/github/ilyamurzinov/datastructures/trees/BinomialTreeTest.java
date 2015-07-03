@@ -4,13 +4,15 @@ import org.junit.Test;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * @author Ilya Murzinov
  */
-@SuppressWarnings("ConstantConditions")
+@SuppressWarnings({"ConstantConditions", "unchecked"})
 public class BinomialTreeTest {
 
     BinomialTree<Integer> tree1 = new BinomialTree<>(6);
@@ -31,6 +33,7 @@ public class BinomialTreeTest {
         BinomialTree<Integer> merge = tree1.merge(tree2);
 
         assertEquals(1, merge.getRootValue(), 0);
+        assertEquals(1, getParentValue(getChildrenSubtree(merge)), 0);
     }
 
     @Test
@@ -57,6 +60,7 @@ public class BinomialTreeTest {
         assertEquals(10, childrenSubtree.getRootValue(), 0);
         assertEquals(17, getChildrenSubtree(childrenSubtree).getRootValue(), 0);
         assertEquals(44, getSiblingsSubtree(childrenSubtree).getRootValue(), 0);
+        assertEquals(6, getParentValue(getSiblingsSubtree(childrenSubtree)), 0);
     }
 
     @Test
@@ -93,7 +97,19 @@ public class BinomialTreeTest {
     @Test
     public void testDeleteRoot() throws Exception {
         BinomialTree<Integer> integerBinomialTree = mergeAllTrees();
-        integerBinomialTree.deleteRoot();
+        List<BinomialTree<Integer>> trees = integerBinomialTree.deleteRoot();
+
+        assertEquals(3, trees.size());
+        assertEquals(29, trees.get(0).getRootValue(), 0);
+        assertEquals(48, getChildrenSubtree(trees.get(0)).getRootValue(), 0);
+
+        assertEquals(10, trees.get(1).getRootValue(), 0);
+
+        assertEquals(44, trees.get(2).getRootValue(), 0);
+
+        for (BinomialTree<Integer> tree : trees) {
+            assertNull(getSiblingsSubtree(tree));
+        }
     }
 
     private BinomialTree<Integer> mergeAllTrees() {
@@ -120,7 +136,7 @@ public class BinomialTreeTest {
 
         Object childrenRoot = valueField.get(root);
 
-        if(childrenRoot == null) {
+        if (childrenRoot == null) {
             return null;
         }
 
@@ -139,12 +155,32 @@ public class BinomialTreeTest {
 
         Object siblingsRoot = valueField.get(root);
 
-        if(siblingsRoot == null) {
+        if (siblingsRoot == null) {
             return null;
         }
 
         Constructor constructor = tree.getClass().getDeclaredConstructor(siblingsRoot.getClass());
         constructor.setAccessible(true);
         return (BinomialTree<T>) constructor.newInstance(siblingsRoot);
+    }
+
+    private <T> T getParentValue(BinomialTree<T> tree) throws Exception {
+        Field rootField = tree.getClass().getDeclaredField("root");
+        rootField.setAccessible(true);
+
+        Object root = rootField.get(tree);
+        Field valueField = root.getClass().getDeclaredField("parent");
+        valueField.setAccessible(true);
+
+        Object parent = valueField.get(root);
+
+        if (parent == null) {
+            return null;
+        }
+
+        Field parentValueField = root.getClass().getDeclaredField("value");
+        parentValueField.setAccessible(true);
+
+        return (T) parentValueField.get(parent);
     }
 }

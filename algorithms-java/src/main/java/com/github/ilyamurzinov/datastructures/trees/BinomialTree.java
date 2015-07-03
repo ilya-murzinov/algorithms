@@ -10,11 +10,11 @@ public class BinomialTree<T> {
     private final Node<T> root;
 
     public BinomialTree(T value) {
-        this.root = new Node<>(value, 0, null, null);
+        this.root = new Node<>(value, 0, null, null, null);
     }
 
     public BinomialTree(Node<T> root) {
-        this.root = new Node<>(root.value, root.degree, root.childrenRoot, root.siblingsRoot);
+        this.root = new Node<>(root.value, root.degree, root.parent, root.childrenRoot, root.siblingsRoot);
     }
 
     public T getRootValue() {
@@ -30,18 +30,28 @@ public class BinomialTree<T> {
             throw new IllegalArgumentException("Can not merge two heaps of different degrees!");
         }
 
-        Node<T> newChildrenRoot = new Node<>(that.root.value, that.root.degree, that.root.childrenRoot,
+        Node<T> newChildrenRoot = new Node<>(that.root.value, that.root.degree, this.root, that.root.childrenRoot,
                 this.root.childrenRoot);
 
-        return new BinomialTree<>(new Node<>(this.root.value, this.root.degree + 1, newChildrenRoot, null));
+        return new BinomialTree<>(new Node<>(this.root.value, this.root.degree + 1, null, newChildrenRoot, null));
     }
 
     public List<BinomialTree<T>> deleteRoot() {
         ArrayList<BinomialTree<T>> result = new ArrayList<>();
 
+        if (root.childrenRoot == null) {
+            return result;
+        }
+
+        result.add(new BinomialTree<>(
+                new Node<>(root.childrenRoot.value, root.childrenRoot.degree, null, root.childrenRoot.childrenRoot, null)
+        ));
+
         Node<T> subtree = root.childrenRoot.siblingsRoot;
         while (subtree != null) {
-            result.add(new BinomialTree<>(subtree));
+            result.add(new BinomialTree<>(
+                    new Node<>(subtree.value, subtree.degree, null, subtree.childrenRoot, null)
+            ));
             subtree = subtree.siblingsRoot;
         }
 
@@ -51,12 +61,14 @@ public class BinomialTree<T> {
     private static class Node<T> {
         private final T value;
         private final int degree;
+        private final Node<T> parent;
         private final Node<T> childrenRoot;
         private final Node<T> siblingsRoot;
 
-        private Node(T value, int degree, Node<T> childrenRoot, Node<T> siblingsRoot) {
+        private Node(T value, int degree, Node<T> parent, Node<T> childrenRoot, Node<T> siblingsRoot) {
             this.value = value;
             this.degree = degree;
+            this.parent = parent;
             this.childrenRoot = childrenRoot;
             this.siblingsRoot = siblingsRoot;
         }

@@ -95,6 +95,7 @@ public class BinomialHeapTest {
         stringBinomialHeap.add("aabab");
         stringBinomialHeap.add("aaaab");
         stringBinomialHeap.add("aaaaa");
+        stringBinomialHeap.add("azzzz");
 
         stringBinomialHeap.deleteMin();
         stringBinomialHeap.deleteMin();
