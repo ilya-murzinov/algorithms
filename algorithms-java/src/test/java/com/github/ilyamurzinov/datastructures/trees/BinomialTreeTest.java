@@ -112,6 +112,14 @@ public class BinomialTreeTest {
         }
     }
 
+    @Test
+    public void testToString() throws Exception {
+        assertEquals(
+                "BinomialTree[root: Node[degree: 3, value: 6, children: Node[degree: 2, value: 29, children: Node[degree: 1, value: 48, children: Node[degree: 0, value: 50, children: null, siblings: null], siblings: Node[degree: 0, value: 31, children: null, siblings: null]], siblings: Node[degree: 1, value: 10, children: Node[degree: 0, value: 17, children: null, siblings: null], siblings: Node[degree: 0, value: 44, children: null, siblings: null]]], siblings: null]]",
+                mergeAllTrees().toString()
+        );
+    }
+
     private BinomialTree<Integer> mergeAllTrees() {
         BinomialTree<Integer> merged12 = tree1.merge(tree2);
         BinomialTree<Integer> merged34 = tree3.merge(tree4);

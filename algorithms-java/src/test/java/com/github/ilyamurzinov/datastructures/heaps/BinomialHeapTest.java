@@ -4,6 +4,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Random;
+
 /**
  * @author Ilya Murzinov
  */
@@ -201,6 +203,21 @@ public class BinomialHeapTest {
 
         heap4.add(heap3.deleteMin());
         Assert.assertTrue(heapEquals(heap1.merge(heap2), heap3.merge(heap4)));
+    }
+
+    @Test
+    public void testToString() throws Exception {
+        stringBinomialHeap.add("aaaab");
+        stringBinomialHeap.add("aaabb");
+        stringBinomialHeap.add("aasab");
+        stringBinomialHeap.add("aabab");
+        stringBinomialHeap.add("aaaab");
+        stringBinomialHeap.add("aaaaa");
+        stringBinomialHeap.add("azzzz");
+        Assert.assertEquals(
+                "BinomialHeap[trees (size: 3): BinomialTree[root: Node[degree: 0, value: azzzz, children: null, siblings: null]], BinomialTree[root: Node[degree: 1, value: aaaaa, children: Node[degree: 0, value: aaaab, children: null, siblings: null], siblings: null]], BinomialTree[root: Node[degree: 2, value: aaaab, children: Node[degree: 1, value: aabab, children: Node[degree: 0, value: aasab, children: null, siblings: null], siblings: Node[degree: 0, value: aaabb, children: null, siblings: null]], siblings: null]]]",
+                stringBinomialHeap.toString()
+        );
     }
 
     private boolean heapEquals(BinomialHeap<Integer> heap1, BinomialHeap<Integer> heap2) {

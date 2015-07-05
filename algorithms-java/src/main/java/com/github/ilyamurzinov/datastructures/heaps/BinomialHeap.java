@@ -195,4 +195,16 @@ public class BinomialHeap<T> implements PriorityQueue<T> {
 
         return result;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder("BinomialHeap[trees (size: ");
+        result.append(trees.size()).append("): ");
+        for (BinomialTree<T> tree : trees) {
+            result.append(tree.toString()).append(", ");
+        }
+        result.delete(result.length() - 2, result.length());
+        result.append("]");
+        return result.toString();
+    }
 }

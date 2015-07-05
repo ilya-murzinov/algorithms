@@ -81,5 +81,25 @@ public class BinomialTree<T> {
         private int getDegree() {
             return degree;
         }
+
+        @Override
+        public String toString() {
+            StringBuilder result = new StringBuilder("Node[");
+            result
+                    .append("degree: ").append(degree)
+                    .append(", ")
+                    .append("value: ").append(value)
+                    .append(", ")
+                    .append("children: ").append(childrenRoot == null ? null : childrenRoot.toString())
+                    .append(", ")
+                    .append("siblings: ").append(siblingsRoot == null ? null : siblingsRoot.toString())
+                    .append("]");
+            return result.toString();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return String.format("BinomialTree[root: %s]", root.toString());
     }
 }
