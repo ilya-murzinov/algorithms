@@ -66,10 +66,6 @@ public class BinomialHeap<T> implements PriorityQueue<T> {
         return new BinomialHeap<>(comparator, merge(trees, that.trees));
     }
 
-    public BinomialHeap<T> delete(T element) {
-        return null;
-    }
-
     @SuppressWarnings("unchecked")
     private int compare(T element1, T element2) {
         if (comparator != null) {

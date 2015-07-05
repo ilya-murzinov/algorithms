@@ -1,6 +1,6 @@
 package com.github.ilyamurzinov.datastructures.trees;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -37,22 +37,27 @@ public class BinomialTree<T> {
     }
 
     public List<BinomialTree<T>> deleteRoot() {
-        ArrayList<BinomialTree<T>> result = new ArrayList<>();
+        LinkedList<BinomialTree<T>> tmp = new LinkedList<>();
 
         if (root.childrenRoot == null) {
-            return result;
+            return tmp;
         }
 
-        result.add(new BinomialTree<>(
+        tmp.add(new BinomialTree<>(
                 new Node<>(root.childrenRoot.value, root.childrenRoot.degree, null, root.childrenRoot.childrenRoot, null)
         ));
 
         Node<T> subtree = root.childrenRoot.siblingsRoot;
         while (subtree != null) {
-            result.add(new BinomialTree<>(
+            tmp.add(new BinomialTree<>(
                     new Node<>(subtree.value, subtree.degree, null, subtree.childrenRoot, null)
             ));
             subtree = subtree.siblingsRoot;
+        }
+
+        LinkedList<BinomialTree<T>> result = new LinkedList<>();
+        while (!tmp.isEmpty()) {
+            result.addLast(tmp.pollLast());
         }
 
         return result;

@@ -167,4 +167,33 @@ public class BinomialHeapTest {
 
         Assert.assertEquals(0, heap1.merge(heap2).findMin(), 0);
     }
+
+    @Test
+    public void test() throws Exception {
+        BinomialHeap<Integer> heap1 = new BinomialHeap<>();
+        BinomialHeap<Integer> heap2 = new BinomialHeap<>();
+        BinomialHeap<Integer> heap3 = new BinomialHeap<>();
+        BinomialHeap<Integer> heap4 = new BinomialHeap<>();
+
+        for (int i = 0; i < 10; i++) {
+            heap1.add(i);
+            heap3.add(i);
+
+            heap2.add(i + 10);
+            heap4.add(i + 10);
+        }
+
+        heap4.add(heap3.deleteMin());
+        Assert.assertTrue(heapEquals(heap1.merge(heap2), heap3.merge(heap4)));
+    }
+
+    private boolean heapEquals(BinomialHeap<Integer> heap1, BinomialHeap<Integer> heap2) {
+        if (heap1.isEmpty() && heap2.isEmpty()) {
+            return true;
+        }
+        int m1 = heap1.deleteMin();
+        int m2 = heap2.deleteMin();
+
+        return m1 == m2 && heapEquals(heap1, heap2);
+    }
 }
