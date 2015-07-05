@@ -100,12 +100,12 @@ public class BinomialTreeTest {
         List<BinomialTree<Integer>> trees = integerBinomialTree.deleteRoot();
 
         assertEquals(3, trees.size());
-        assertEquals(29, trees.get(0).getRootValue(), 0);
-        assertEquals(48, getChildrenSubtree(trees.get(0)).getRootValue(), 0);
+        assertEquals(44, trees.get(0).getRootValue(), 0);
 
         assertEquals(10, trees.get(1).getRootValue(), 0);
 
-        assertEquals(44, trees.get(2).getRootValue(), 0);
+        assertEquals(29, trees.get(2).getRootValue(), 0);
+        assertEquals(48, getChildrenSubtree(trees.get(2)).getRootValue(), 0);
 
         for (BinomialTree<Integer> tree : trees) {
             assertNull(getSiblingsSubtree(tree));
