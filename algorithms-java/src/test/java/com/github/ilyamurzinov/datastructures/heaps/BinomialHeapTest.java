@@ -169,7 +169,23 @@ public class BinomialHeapTest {
     }
 
     @Test
-    public void test() throws Exception {
+    public void testMergeWithDifferentDegrees() throws Exception {
+        BinomialHeap<Integer> heap1 = new BinomialHeap<>();
+        BinomialHeap<Integer> heap2 = new BinomialHeap<>();
+
+        for (int i = -10; i < 0; i++) {
+            heap1.add(i);
+        }
+
+        for (int i = 0; i < 1024; i++) {
+            heap2.add(i);
+        }
+
+        Assert.assertEquals(-10, heap1.merge(heap2).findMin(), 0);
+    }
+
+    @Test
+    public void testDeleteAddMerge() throws Exception {
         BinomialHeap<Integer> heap1 = new BinomialHeap<>();
         BinomialHeap<Integer> heap2 = new BinomialHeap<>();
         BinomialHeap<Integer> heap3 = new BinomialHeap<>();
