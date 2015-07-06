@@ -206,6 +206,31 @@ public class BinomialHeapTest {
     }
 
     @Test
+    public void testDeleteAddMergeWithRandom() throws Exception {
+        for (int j = 0; j < 100; j++) {
+            BinomialHeap<Integer> heap1 = new BinomialHeap<>();
+            BinomialHeap<Integer> heap2 = new BinomialHeap<>();
+            BinomialHeap<Integer> heap3 = new BinomialHeap<>();
+            BinomialHeap<Integer> heap4 = new BinomialHeap<>();
+
+            Random random = new Random();
+
+            for (int i = 0; i < 1000; i++) {
+                int i1 = random.nextInt(1000);
+                int i2 = random.nextInt(1000);
+                heap1.add(i1);
+                heap3.add(i1);
+
+                heap2.add(i2);
+                heap4.add(i2);
+            }
+
+            heap4.add(heap3.deleteMin());
+            Assert.assertTrue(heapEquals(heap1.merge(heap2), heap3.merge(heap4)));
+        }
+    }
+
+    @Test
     public void testToString() throws Exception {
         stringBinomialHeap.add("aaaab");
         stringBinomialHeap.add("aaabb");

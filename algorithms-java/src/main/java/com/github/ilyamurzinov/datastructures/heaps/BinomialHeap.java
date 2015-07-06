@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Ilya Murzinov
@@ -99,15 +100,12 @@ public class BinomialHeap<T> implements PriorityQueue<T> {
     private BinomialTree<T> deleteMinTree() {
         BinomialTree<T> result = findMinTree();
 
-        LinkedList<BinomialTree<T>> newTrees = new LinkedList<>();
-
-        for (BinomialTree<T> next : trees) {
-            if (next.getDegree() != result.getDegree()) {
-                newTrees.add(next);
-            }
+        if (result == null) {
+            return null;
         }
 
-        trees = newTrees;
+        trees = trees.stream().filter(next -> next.getDegree() != result.getDegree())
+                .collect(Collectors.toCollection(LinkedList::new));
 
         return result;
     }
@@ -126,11 +124,15 @@ public class BinomialHeap<T> implements PriorityQueue<T> {
             BinomialTree<T> thisCurrentTree = null;
             BinomialTree<T> thatCurrentTree = null;
 
-            while (thisIterator.hasNext() && thatIterator.hasNext()) {
-                if (thisCurrentTree == null) {
+            while (true) {
+                if (thisCurrentTree == null && !thisIterator.hasNext()) {
+                    break;
+                } else if (thisCurrentTree == null) {
                     thisCurrentTree = thisIterator.next();
                 }
-                if (thatCurrentTree == null) {
+                if (thatCurrentTree == null && !thatIterator.hasNext()) {
+                    break;
+                } else if (thatCurrentTree == null) {
                     thatCurrentTree = thatIterator.next();
                 }
 
@@ -185,15 +187,7 @@ public class BinomialHeap<T> implements PriorityQueue<T> {
             }
         }
 
-        LinkedList<BinomialTree<T>> result = new LinkedList<>();
-
-        for (BinomialTree<T> tree : trees) {
-            if (tree != null) {
-                result.add(tree);
-            }
-        }
-
-        return result;
+        return trees.stream().filter(tree -> tree != null).collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override
