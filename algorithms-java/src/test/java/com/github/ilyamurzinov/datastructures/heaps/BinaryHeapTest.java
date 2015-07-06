@@ -117,12 +117,19 @@ public class BinaryHeapTest {
 
     @Test
     public void testIsEmpty() throws Exception {
+        Assert.assertTrue(integerBinaryHeap.isEmpty());
+
         integerBinaryHeap.add(2);
+
+        Assert.assertFalse(integerBinaryHeap.isEmpty());
+
         integerBinaryHeap.add(4);
         integerBinaryHeap.add(7);
         integerBinaryHeap.add(42);
         integerBinaryHeap.add(1);
         integerBinaryHeap.add(-100);
+
+        Assert.assertFalse(integerBinaryHeap.isEmpty());
 
         integerBinaryHeap.deleteMin();
         integerBinaryHeap.deleteMin();
@@ -144,6 +151,7 @@ public class BinaryHeapTest {
     @Test
     public void testToString() throws Exception {
         BinaryHeap<Integer> heap = new BinaryHeap<>();
+        Assert.assertEquals("BinaryHeap: []", heap.toString());
         heap.add(1);
         heap.add(2);
         heap.add(3);

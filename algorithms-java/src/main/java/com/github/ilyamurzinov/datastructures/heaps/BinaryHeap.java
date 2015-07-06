@@ -170,7 +170,9 @@ public class BinaryHeap<T> implements PriorityQueue<T> {
 
             stringBuilder.append(element).append(", ");
         }
-        stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
+        if (size > 0) {
+            stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
+        }
         stringBuilder.append("]");
         return stringBuilder.toString();
     }
