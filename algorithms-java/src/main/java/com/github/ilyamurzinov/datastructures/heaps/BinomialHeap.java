@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -47,20 +48,17 @@ public class BinomialHeap<T> implements PriorityQueue<T> {
 
     @Override
     public T findMin() {
-        BinomialTree<T> minTree = findMinTree();
-        return minTree == null ? null : minTree.getRootValue();
+        return findMinTree().<T>map(BinomialTree::getRootValue).orElse(null);
     }
 
     @Override
     public T deleteMin() {
-        BinomialTree<T> minTree = deleteMinTree();
-        if (minTree == null) {
-            return null;
-        }
+        Optional<BinomialTree<T>> minTree = deleteMinTree();
 
-        trees = merge(trees, minTree.deleteRoot());
-
-        return minTree.getRootValue();
+        return minTree.map(tree -> {
+            trees = merge(trees, tree.deleteRoot());
+            return tree.getRootValue();
+        }).orElse(null);
     }
 
     public BinomialHeap<T> merge(BinomialHeap<T> that) {
@@ -81,30 +79,14 @@ public class BinomialHeap<T> implements PriorityQueue<T> {
         }
     }
 
-    private BinomialTree<T> findMinTree() {
-        if (trees.isEmpty()) {
-            return null;
-        }
-
-        BinomialTree<T> min = null;
-
-        for (BinomialTree<T> tree : trees) {
-            if (min == null || compare(tree.getRootValue(), min.getRootValue()) < 0) {
-                min = tree;
-            }
-        }
-
-        return min;
+    private Optional<BinomialTree<T>> findMinTree() {
+        return trees.stream().min((o1, o2) -> compare(o1.getRootValue(), o2.getRootValue()));
     }
 
-    private BinomialTree<T> deleteMinTree() {
-        BinomialTree<T> result = findMinTree();
+    private Optional<BinomialTree<T>> deleteMinTree() {
+        Optional<BinomialTree<T>> result = findMinTree();
 
-        if (result == null) {
-            return null;
-        }
-
-        trees = trees.stream().filter(next -> next.getDegree() != result.getDegree())
+        trees = trees.stream().filter(next -> result.isPresent() && next.getDegree() != result.get().getDegree())
                 .collect(Collectors.toCollection(LinkedList::new));
 
         return result;
