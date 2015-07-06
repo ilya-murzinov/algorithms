@@ -1,6 +1,8 @@
 package com.github.ilyamurzinov.datastructures.heaps;
 
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.stream.Collectors;
 
 /**
  * @author Ilya Murzinov
@@ -159,19 +161,11 @@ public class BinaryHeap<T> implements PriorityQueue<T> {
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("BinaryHeap: [");
-        for (T element : elements) {
-            if (element == null) {
-                break;
-            }
-
-            stringBuilder.append(element).append(", ");
-        }
-        if (size > 0) {
-            stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
-        }
-        stringBuilder.append("]");
-        return stringBuilder.toString();
+        String elements = Arrays.asList(this.elements)
+                .stream()
+                .filter(e -> e != null)
+                .map(Object::toString)
+                .collect(Collectors.joining(", "));
+        return "BinaryHeap: [" + elements + "]";
     }
 }
