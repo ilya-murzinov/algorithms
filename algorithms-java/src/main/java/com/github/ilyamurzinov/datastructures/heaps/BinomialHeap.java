@@ -43,7 +43,7 @@ public class BinomialHeap<T> implements PriorityQueue<T> {
 
     @Override
     public boolean isEmpty() {
-        return trees == null || trees.isEmpty();
+        return trees.isEmpty();
     }
 
     @Override
@@ -85,9 +85,10 @@ public class BinomialHeap<T> implements PriorityQueue<T> {
 
     private Optional<BinomialTree<T>> deleteMinTree() {
         Optional<BinomialTree<T>> result = findMinTree();
-
-        trees = trees.stream().filter(next -> result.isPresent() && next.getDegree() != result.get().getDegree())
-                .collect(Collectors.toCollection(LinkedList::new));
+        result.ifPresent(
+                tree -> trees = trees.stream().filter(next -> next.getDegree() != tree.getDegree())
+                        .collect(Collectors.toCollection(LinkedList::new))
+        );
 
         return result;
     }
