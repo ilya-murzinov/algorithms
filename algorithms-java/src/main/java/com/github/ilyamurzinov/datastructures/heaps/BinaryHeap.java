@@ -143,9 +143,7 @@ public class BinaryHeap<T> implements PriorityQueue<T> {
             T[] tmp = elements;
             capacity = size * 2;
             elements = (T[]) new Object[capacity];
-            if (tmp.length > 0) {
-                System.arraycopy(tmp, 0, elements, 0, size);
-            }
+            System.arraycopy(tmp, 0, elements, 0, size);
         }
     }
 
