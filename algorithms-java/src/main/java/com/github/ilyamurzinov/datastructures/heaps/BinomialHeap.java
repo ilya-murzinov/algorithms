@@ -5,7 +5,6 @@ import com.github.ilyamurzinov.datastructures.trees.BinomialTree;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -53,9 +52,10 @@ public class BinomialHeap<T> implements PriorityQueue<T> {
 
     @Override
     public T deleteMin() {
-        Optional<BinomialTree<T>> minTree = deleteMinTree();
+        Optional<BinomialTree<T>> minTree = findMinTree();
 
         return minTree.map(tree -> {
+            trees.remove(tree);
             trees = merge(trees, tree.deleteRoot());
             return tree.getRootValue();
         }).orElse(null);
@@ -69,13 +69,13 @@ public class BinomialHeap<T> implements PriorityQueue<T> {
     private int compare(T element1, T element2) {
         if (comparator != null) {
             return comparator.compare(element1, element2);
-        } else {
-            try {
-                return ((Comparable<T>) element1).compareTo(element2);
-            } catch (ClassCastException e) {
-                throw new IllegalArgumentException(
-                        "Cannot compare instances of non-comparable class without comparator");
-            }
+        }
+
+        try {
+            return ((Comparable<T>) element1).compareTo(element2);
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException(
+                    "Cannot compare instances of non-comparable class without comparator");
         }
     }
 
@@ -83,23 +83,13 @@ public class BinomialHeap<T> implements PriorityQueue<T> {
         return trees.stream().min((o1, o2) -> compare(o1.getRootValue(), o2.getRootValue()));
     }
 
-    private Optional<BinomialTree<T>> deleteMinTree() {
-        Optional<BinomialTree<T>> result = findMinTree();
-        result.ifPresent(
-                tree -> trees = trees.stream().filter(next -> next.getDegree() != tree.getDegree())
-                        .collect(Collectors.toCollection(LinkedList::new))
-        );
-
-        return result;
-    }
-
-    private LinkedList<BinomialTree<T>> merge(LinkedList<BinomialTree<T>> thisTrees, List<BinomialTree<T>> thatTrees) {
+    private LinkedList<BinomialTree<T>> merge(LinkedList<BinomialTree<T>> thisTrees, LinkedList<BinomialTree<T>> thatTrees) {
         LinkedList<BinomialTree<T>> trees = new LinkedList<>();
 
         if (thisTrees.isEmpty()) {
-            trees = new LinkedList<>(thatTrees);
+            trees = thatTrees;
         } else if (thatTrees.isEmpty()) {
-            trees = new LinkedList<>(thisTrees);
+            trees = thisTrees;
         } else {
             Iterator<BinomialTree<T>> thisIterator = thisTrees.iterator();
             Iterator<BinomialTree<T>> thatIterator = thatTrees.iterator();

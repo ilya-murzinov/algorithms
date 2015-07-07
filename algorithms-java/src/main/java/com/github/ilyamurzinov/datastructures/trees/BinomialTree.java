@@ -1,7 +1,6 @@
 package com.github.ilyamurzinov.datastructures.trees;
 
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * @author Ilya Murzinov
@@ -36,28 +35,23 @@ public class BinomialTree<T> {
         return new BinomialTree<>(new Node<>(this.root.value, this.root.degree + 1, null, newChildrenRoot, null));
     }
 
-    public List<BinomialTree<T>> deleteRoot() {
-        LinkedList<BinomialTree<T>> tmp = new LinkedList<>();
+    public LinkedList<BinomialTree<T>> deleteRoot() {
+        LinkedList<BinomialTree<T>> result = new LinkedList<>();
 
         if (root.childrenRoot == null) {
-            return tmp;
+            return result;
         }
 
-        tmp.add(new BinomialTree<>(
+        result.add(new BinomialTree<>(
                 new Node<>(root.childrenRoot.value, root.childrenRoot.degree, null, root.childrenRoot.childrenRoot, null)
         ));
 
         Node<T> subtree = root.childrenRoot.siblingsRoot;
         while (subtree != null) {
-            tmp.add(new BinomialTree<>(
+            result.addFirst(new BinomialTree<>(
                     new Node<>(subtree.value, subtree.degree, null, subtree.childrenRoot, null)
             ));
             subtree = subtree.siblingsRoot;
-        }
-
-        LinkedList<BinomialTree<T>> result = new LinkedList<>();
-        while (!tmp.isEmpty()) {
-            result.addLast(tmp.pollLast());
         }
 
         return result;
@@ -84,17 +78,11 @@ public class BinomialTree<T> {
 
         @Override
         public String toString() {
-            StringBuilder result = new StringBuilder("Node[");
-            result
-                    .append("degree: ").append(degree)
-                    .append(", ")
-                    .append("value: ").append(value)
-                    .append(", ")
-                    .append("children: ").append(childrenRoot == null ? null : childrenRoot.toString())
-                    .append(", ")
-                    .append("siblings: ").append(siblingsRoot == null ? null : siblingsRoot.toString())
-                    .append("]");
-            return result.toString();
+            return "Node[degree: " + degree + ", "
+                    + "value: " + value + ", "
+                    + "children: " + (childrenRoot == null ? null : childrenRoot.toString())
+                    + ", " + "siblings: " + (siblingsRoot == null ? null : siblingsRoot.toString())
+                    + "]";
         }
     }
 

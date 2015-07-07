@@ -226,7 +226,9 @@ public class BinomialHeapTest {
             }
 
             heap4.add(heap3.deleteMin());
-            Assert.assertTrue(heapEquals(heap1.merge(heap2), heap3.merge(heap4)));
+            BinomialHeap<Integer> merge1 = heap1.merge(heap2);
+            BinomialHeap<Integer> merge2 = heap3.merge(heap4);
+            Assert.assertTrue(heapEquals(merge1, merge2));
         }
     }
 
