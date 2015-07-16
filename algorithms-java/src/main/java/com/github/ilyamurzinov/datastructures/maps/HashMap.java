@@ -66,19 +66,18 @@ public class HashMap<K, V> implements Map<K, V> {
 
     @Override
     public V get(K key) {
-        if (key == null) {
-            return buckets[0] == null ? null : buckets[0].getValue();
-        } else {
-            int hash = hash(key.hashCode());
-            Entry<K, V> entry = buckets[indexFor(hash)];
-            while (entry != null) {
-                if (key.equals(entry.getKey())) {
-                    return entry.getValue();
-                }
-                entry = entry.next;
+        int hash = key == null ? 0 : hash(key.hashCode());
+        int index = indexFor(hash);
+
+        Entry<K, V> entry = buckets[index];
+
+        while (entry != null) {
+            if (key == null ? entry.key == null : key.equals(entry.getKey())) {
+                return entry.getValue();
             }
-            return null;
+            entry = entry.next;
         }
+        return null;
     }
 
     @Override
@@ -104,38 +103,34 @@ public class HashMap<K, V> implements Map<K, V> {
 
     @Override
     public V remove(K key) {
-        if (key == null) {
-            return removeForNullKey();
-        } else {
-            int hash = hash(key.hashCode());
-            int index = indexFor(hash);
-            Entry<K, V> entry = buckets[index];
+        int hash = key == null ? 0 : hash(key.hashCode());
+        int index = indexFor(hash);
+        Entry<K, V> entry = buckets[index];
 
-            if (entry == null) {
-                return null;
-            }
+        if (entry == null) {
+            return null;
+        }
 
-            Entry<K, V> next = entry.next;
+        Entry<K, V> next = entry.next;
 
-            if (key.equals(entry.key)) {
+        if (key == null ? entry.key == null : key.equals(entry.key)) {
+            V result = entry.getValue();
+            buckets[index] = next;
+            size--;
+            return result;
+        }
+
+        while (entry != null) {
+            if (key == null ? entry.key == null : key.equals(entry.key)) {
                 V result = entry.getValue();
-                buckets[index] = next;
+                entry.next = next == null ? null : next.next;
                 size--;
                 return result;
             }
-
-            while (entry != null) {
-                if (key.equals(entry.key)) {
-                    V result = entry.getValue();
-                    entry.next = next == null ? null : next.next;
-                    size--;
-                    return result;
-                }
-                entry = next;
-                next = next == null ? null : next.next;
-            }
-            return null;
+            entry = next;
+            next = next == null ? null : next.next;
         }
+        return null;
     }
 
     @Override
@@ -236,36 +231,6 @@ public class HashMap<K, V> implements Map<K, V> {
         resize();
         addEntry(null, value, 0, 0);
         size++;
-        return null;
-    }
-
-    private V removeForNullKey() {
-        int index = 0;
-        Entry<K, V> entry = buckets[index];
-
-        if (entry == null) {
-            return null;
-        }
-
-        Entry<K, V> next = entry.next;
-
-        if (entry.key == null) {
-            V result = entry.getValue();
-            buckets[index] = next;
-            size--;
-            return result;
-        }
-
-        while (entry != null) {
-            if (entry.key == null) {
-                V result = entry.getValue();
-                entry.next = next == null ? null : next.next;
-                size--;
-                return result;
-            }
-            entry = next;
-            next = next == null ? null : next.next;
-        }
         return null;
     }
 
