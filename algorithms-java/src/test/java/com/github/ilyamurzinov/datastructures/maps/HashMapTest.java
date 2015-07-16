@@ -17,6 +17,12 @@ public class HashMapTest {
         assertEquals(128, getCapacity(map));
     }
 
+    @Test
+    public void shouldBeAbleToConstructMapWithInitialCapacityGreaterThanMaximum() throws Exception {
+        HashMap<TestClass, String> map = new HashMap<>((1 << 20) + 1);
+        assertEquals(1 << 20, getCapacity(map));
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void shouldNotBeAbleToConstructMapWithIncorrectInitialCapacity() throws Exception {
         new HashMap<>(-123);
@@ -90,6 +96,74 @@ public class HashMapTest {
         assertEquals("value", oldValue);
         assertEquals(0, map.size());
         assertTrue(map.isEmpty());
+    }
+
+    @Test
+    public void mapShouldPutValueWithNonNullKey() throws Exception {
+        Map<String, String> map = new HashMap<>();
+        assertEquals(0, map.size());
+        assertTrue(map.isEmpty());
+
+        map.put("key", "value");
+        assertEquals(1, map.size());
+        assertFalse(map.isEmpty());
+
+        String oldValue = map.put("key", "new value");
+        assertEquals("value", oldValue);
+        assertEquals(1, map.size());
+        assertFalse(map.isEmpty());
+    }
+
+    @Test
+    public void mapShouldGetValueWithNonNullKey() throws Exception {
+        Map<String, String> map = new HashMap<>();
+        assertEquals(0, map.size());
+        assertTrue(map.isEmpty());
+
+        map.put("key", "value");
+        assertEquals(1, map.size());
+        assertFalse(map.isEmpty());
+
+        String oldValue = map.get("key");
+        assertEquals("value", oldValue);
+        assertEquals(1, map.size());
+        assertFalse(map.isEmpty());
+    }
+
+    @Test
+    public void mapShouldRemoveValueWithNonNullKey() throws Exception {
+        Map<String, String> map = new HashMap<>();
+        assertEquals(0, map.size());
+        assertTrue(map.isEmpty());
+
+        map.put("key", "value");
+        assertEquals(1, map.size());
+        assertFalse(map.isEmpty());
+
+        String oldValue = map.remove("key");
+        assertEquals("value", oldValue);
+        assertEquals(0, map.size());
+        assertTrue(map.isEmpty());
+    }
+
+    @Test
+    public void mapShouldResizeAfterReachedThreshold() throws Exception {
+        HashMap<Integer, Integer> map = new HashMap<>(1 << 10, 0.5);
+        for (int i = 0; i < (1 << 9) + 1; i++) {
+            map.put(i, i);
+        }
+        assertEquals(1 << 11, getCapacity(map));
+    }
+
+    @Test
+    public void mapShouldHandleInefficientHashCodeCorrectly() throws Exception {
+        Map<TestClass, String> map = new HashMap<>();
+        for (int i = 0; i < 1 << 10; i++) {
+            map.put(new TestClass(i), "value" + i);
+        }
+        for (int i = 0; i < 1 << 10; i++) {
+            assertEquals("value" + i, map.get(new TestClass(i)));
+        }
     }
 
     private int getCapacity(HashMap map) throws Exception {

@@ -8,7 +8,7 @@ import java.util.Set;
  */
 public class HashMap<K, V> implements Map<K, V> {
     private static final int DEFAULT_CAPACITY = 1 << 4;
-    private static final int MAXIMUM_CAPACITY = 1 << 30;
+    private static final int MAXIMUM_CAPACITY = 1 << 20; // not 1 << 30, for testing purposes
     private static final double DEFAULT_LOAD_FACTOR = 0.75;
 
     private Entry<K, V>[] buckets;
@@ -110,11 +110,29 @@ public class HashMap<K, V> implements Map<K, V> {
             int hash = hash(key.hashCode());
             int index = indexFor(hash);
             Entry<K, V> entry = buckets[index];
-            while (entry.next != null) {
-                if (key.equals(entry.getKey())) {
-                    return entry.value;
+
+            if (entry == null) {
+                return null;
+            }
+
+            Entry<K, V> next = entry.next;
+
+            if (key.equals(entry.key)) {
+                V result = entry.getValue();
+                buckets[index] = next;
+                size--;
+                return result;
+            }
+
+            while (entry != null) {
+                if (key.equals(entry.key)) {
+                    V result = entry.getValue();
+                    entry.next = next == null ? null : next.next;
+                    size--;
+                    return result;
                 }
-                entry = entry.next;
+                entry = next;
+                next = next == null ? null : next.next;
             }
             return null;
         }
@@ -151,14 +169,14 @@ public class HashMap<K, V> implements Map<K, V> {
 
     private int getCapacity(int capacity) {
         int result = 1;
-        while (result < capacity && result < MAXIMUM_CAPACITY) {
+        while (result < capacity) {
             result <<= 1;
         }
         return result;
     }
 
     private void resize() {
-        if (size + 1 == threshold) {
+        if (size + 1 >= threshold) {
             int newCapacity = capacity << 1;
             Entry[] oldBuckets = buckets;
             buckets = new Entry[newCapacity];
