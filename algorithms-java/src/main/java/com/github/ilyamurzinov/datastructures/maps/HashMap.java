@@ -98,6 +98,8 @@ public class HashMap<K, V> implements Map<K, V> {
                 hashMapEntry = hashMapEntry.next;
             }
             resize();
+            hash = hash(key.hashCode());
+            index = indexFor(hash);
             addEntry(key, value, hash, index);
             size++;
             return null;
@@ -146,8 +148,12 @@ public class HashMap<K, V> implements Map<K, V> {
 
     @Override
     public void clear() {
-        capacity = DEFAULT_CAPACITY;
-        buckets = new HashMapEntry[capacity];
+        if (size > 0) {
+            size = 0;
+            for (int i = 0; i < buckets.length; i++) {
+                buckets[i] = null;
+            }
+        }
     }
 
     @Override
@@ -292,12 +298,6 @@ public class HashMap<K, V> implements Map<K, V> {
             this.value = value;
             return oldValue;
         }
-
-        @Override
-        public String toString() {
-            return "HashMapEntry{" + "key=" + key + ", value=" + value + ", hash=" + hash + ", next="
-                    + (next == null ? null : next.toString()) + '}';
-        }
     }
 
     private static abstract class AbstractEntryIterator<K, V> {
@@ -321,13 +321,13 @@ public class HashMap<K, V> implements Map<K, V> {
 
             if (next.next != null) {
                 next = next.next;
-            }
-
-            currentBucket++;
-
-            while (currentBucket < buckets.length && buckets[currentBucket] == null)
+            } else {
                 currentBucket++;
-            next = currentBucket < buckets.length ? buckets[currentBucket] : null;
+
+                while (currentBucket < buckets.length && buckets[currentBucket] == null)
+                    currentBucket++;
+                next = currentBucket < buckets.length ? buckets[currentBucket] : null;
+            }
 
             return tmp;
         }

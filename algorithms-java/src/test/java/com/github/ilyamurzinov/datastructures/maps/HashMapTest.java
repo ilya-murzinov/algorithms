@@ -15,13 +15,13 @@ public class HashMapTest {
 
     @Test
     public void shouldBeAbleToConstructMapWithInitialCapacity() throws Exception {
-        HashMap<TestClass0, String> map = new HashMap<>(123);
+        Map<TestClass0, String> map = new HashMap<>(123);
         assertEquals(128, getCapacity(map));
     }
 
     @Test
     public void shouldBeAbleToConstructMapWithInitialCapacityGreaterThanMaximum() throws Exception {
-        HashMap<TestClass0, String> map = new HashMap<>((1 << 20) + 1);
+        Map<TestClass0, String> map = new HashMap<>((1 << 20) + 1);
         assertEquals(1 << 20, getCapacity(map));
     }
 
@@ -32,13 +32,13 @@ public class HashMapTest {
 
     @Test
     public void shouldBeAbleToConstructMapWithInitialCapacityAndLoadFactor() throws Exception {
-        HashMap<TestClass0, String> map = new HashMap<>(123, 0.5);
+        Map<TestClass0, String> map = new HashMap<>(123, 0.5);
         assertEquals(0.5, getLoadFactor(map), 0);
     }
 
     @Test
     public void shouldBeAbleToConstructMapWithLoadFactorGreaterThanOne() throws Exception {
-        HashMap<TestClass0, String> map = new HashMap<>(123, 100500);
+        Map<TestClass0, String> map = new HashMap<>(123, 100500);
         assertEquals(0.75, getLoadFactor(map), 0);
     }
 
@@ -54,7 +54,7 @@ public class HashMapTest {
 
     @Test
     public void mapShouldReturnCorrectSize() throws Exception {
-        HashMap<Integer, Integer> map = new HashMap<>(1 << 10, 0.5);
+        Map<Integer, Integer> map = new HashMap<>(1 << 10, 0.5);
         assertEquals(0, map.size());
         for (int i = 0; i < (1 << 9) + 1; i++) {
             map.put(i, i);
@@ -64,7 +64,7 @@ public class HashMapTest {
 
     @Test
     public void mapShouldReturnIsEmpty() throws Exception {
-        HashMap<Integer, Integer> map = new HashMap<>(1 << 10, 0.5);
+        Map<Integer, Integer> map = new HashMap<>(1 << 10, 0.5);
         assertTrue(map.isEmpty());
         for (int i = 0; i < (1 << 9) + 1; i++) {
             map.put(i, i);
@@ -179,7 +179,7 @@ public class HashMapTest {
 
     @Test
     public void mapShouldResizeAfterReachedThreshold() throws Exception {
-        HashMap<Integer, Integer> map = new HashMap<>(1 << 10, 0.5);
+        Map<Integer, Integer> map = new HashMap<>(1 << 10, 0.5);
         for (int i = 0; i < (1 << 9) + 1; i++) {
             map.put(i, i);
         }
@@ -214,6 +214,8 @@ public class HashMapTest {
         Map<TestClass0, String> map = new HashMap<>();
         map.put(new TestClass0(0), "value1");
         map.put(new TestClass0(1), "value2");
+        map.put(new TestClass0(1), "value3");
+        map.put(new TestClass0(1), "value4");
         String oldValue = map.remove(new TestClass0(12));
         assertNull(oldValue);
     }
@@ -241,7 +243,7 @@ public class HashMapTest {
     }
 
     @Test
-    public void mapShouldHandleInefficientHashCodeCorrectly() throws Exception {
+    public void mapShouldHandleConstantHashCodeCorrectly() throws Exception {
         Map<TestClass0, String> map = new HashMap<>();
         for (int i = 0; i < 1 << 10; i++) {
             map.put(new TestClass0(i), "value" + i);
@@ -260,8 +262,11 @@ public class HashMapTest {
             set.add(i);
         }
 
+        assertEquals(1 << 10, map.entrySet().size());
+
         for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
             assertTrue(set.contains(entry.getValue()));
+            assertTrue(set.contains(entry.getKey()));
             set.remove(entry.getValue());
         }
 
@@ -277,6 +282,7 @@ public class HashMapTest {
             set.add(i);
         }
 
+        assertEquals(1 << 10, map.values().size());
         assertTrue(set.containsAll(map.values()) && map.values().containsAll(set));
     }
 
@@ -289,35 +295,94 @@ public class HashMapTest {
             set.add(i);
         }
 
-        assertTrue(set.containsAll(map.keySet()) && map.values().containsAll(set));
+        assertEquals(1 << 10, map.keySet().size());
+        assertTrue(set.containsAll(map.keySet()) && map.keySet().containsAll(set));
+    }
+
+    @Test
+    public void mapShouldReturnCorrectEntrySetWithConstantHashCode() throws Exception {
+        Map<TestClass42, Integer> map = new HashMap<>();
+        Set<Integer> set = new HashSet<>();
+        for (int i = 0; i < 1 << 6; i++) {
+            map.put(new TestClass42(i), i);
+            set.add(i);
+        }
+
+        assertEquals(1 << 6, map.entrySet().size());
+
+        for (Map.Entry<TestClass42, Integer> entry : map.entrySet()) {
+            assertTrue(set.contains(entry.getValue()));
+            set.remove(entry.getValue());
+        }
+
+        assertTrue(set.isEmpty());
+    }
+
+    @Test
+    public void mapShouldReturnCorrectValuesWithConstantHashCode() throws Exception {
+        Map<TestClass0, Integer> map = new HashMap<>();
+        Set<Integer> set = new HashSet<>();
+        for (int i = 0; i < 1 << 10; i++) {
+            map.put(new TestClass0(i), i);
+            set.add(i);
+        }
+
+        assertEquals(1 << 10, map.values().size());
+        assertTrue(set.containsAll(map.values()) && map.values().containsAll(set));
+    }
+
+    @Test
+    public void mapShouldReturnCorrectKeySetWithConstantHashCode() throws Exception {
+        Map<TestClass0, Integer> map = new HashMap<>();
+        Set<TestClass0> set = new HashSet<>();
+        for (int i = 0; i < 1 << 10; i++) {
+            map.put(new TestClass0(i), i);
+            set.add(new TestClass0(i));
+        }
+
+        assertEquals(1 << 10, map.keySet().size());
+        assertTrue(set.containsAll(map.keySet()) && map.keySet().containsAll(set));
     }
 
     @Test
     public void mapShouldPutAllElementsFromAnotherMap() throws Exception {
-//        Map<Integer, Integer> map1 = new HashMap<>();
-//        Map<Integer, Integer> map2 = new HashMap<>();
-//
-//        for (int i = 0; i < 1 << 10; i++) {
-//            if (i % 2 == 0)
-//                map1.put(i, i);
-//            else
-//                map2.put(i, i);
-//        }
-//
-//        map1.putAll(map2);
-//
-//        for (int i = 0; i < 1 << 10; i++) {
-//            assertEquals(i, map1.get(i), 0);
-//        }
+        // Map<Integer, Integer> map1 = new HashMap<>();
+        // Map<Integer, Integer> map2 = new HashMap<>();
+        //
+        // for (int i = 0; i < 1 << 10; i++) {
+        // if (i % 2 == 0)
+        // map1.put(i, i);
+        // else
+        // map2.put(i, i);
+        // }
+        //
+        // map1.putAll(map2);
+        //
+        // for (int i = 0; i < 1 << 10; i++) {
+        // assertEquals(i, map1.get(i), 0);
+        // }
     }
 
-    private int getCapacity(HashMap map) throws Exception {
+    @Test
+    public void mapShouldClearCorrectly() throws Exception {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < 1 << 10; i++) {
+            map.put(i, i);
+        }
+        int capacity = getCapacity(map);
+        map.clear();
+        assertEquals(0, map.size(), 0);
+        assertTrue(map.isEmpty());
+        assertEquals(capacity, getCapacity(map), 0);
+    }
+
+    private int getCapacity(Map map) throws Exception {
         Field field = map.getClass().getDeclaredField("capacity");
         field.setAccessible(true);
         return (int) field.get(map);
     }
 
-    private double getLoadFactor(HashMap map) throws Exception {
+    private double getLoadFactor(Map map) throws Exception {
         Field field = map.getClass().getDeclaredField("loadFactor");
         field.setAccessible(true);
         return (double) field.get(map);
@@ -346,6 +411,32 @@ public class HashMapTest {
         @Override
         public int hashCode() {
             return 0;
+        }
+    }
+
+    class TestClass42 {
+        private int i;
+
+        TestClass42(int i) {
+            this.i = i;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
+
+            TestClass42 testClass0 = (TestClass42) o;
+
+            return i == testClass0.i;
+
+        }
+
+        @Override
+        public int hashCode() {
+            return 42;
         }
     }
 }
