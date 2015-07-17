@@ -307,7 +307,7 @@ public class HashMap<K, V> implements Map<K, V> {
             this.buckets = buckets;
             while (currentBucket < buckets.length && buckets[currentBucket] == null)
                 currentBucket++;
-            next = buckets[currentBucket];
+            next = currentBucket < buckets.length ? buckets[currentBucket] : null;
         }
 
         public boolean hasNext() {

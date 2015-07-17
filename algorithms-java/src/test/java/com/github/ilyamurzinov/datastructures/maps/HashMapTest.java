@@ -377,6 +377,51 @@ public class HashMapTest {
     }
 
     @Test
+    public void mapShouldReturnCorrectContainsKey() throws Exception {
+        Map<Integer, Integer> map = new HashMap<>();
+        Set<Integer> set = new HashSet<>();
+
+        assertFalse(map.containsValue(123));
+
+        for (int i = 0; i < 1 << 10; i++) {
+            map.put(i, i);
+            set.add(i);
+        }
+
+        for (int i : set) {
+            assertTrue(map.containsKey(i));
+        }
+    }
+
+    @Test
+    public void mapShouldReturnCorrectContainsValue() throws Exception {
+        Map<Integer, Integer> map = new HashMap<>();
+        Set<Integer> set = new HashSet<>();
+
+        assertFalse(map.containsValue(123));
+
+        for (int i = 0; i < 1 << 10; i++) {
+            map.put(i, i);
+            set.add(i);
+        }
+
+        for (int i : set) {
+            assertTrue(map.containsValue(i));
+        }
+    }
+
+    @Test
+    public void mapShouldRemoveValuesFromKeySet() throws Exception {
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(42, 42);
+        assertTrue(map.containsKey(42));
+        assertTrue(map.keySet().contains(42));
+        map.remove(42);
+        assertFalse(map.containsKey(42));
+        assertFalse(map.keySet().contains(42));
+    }
+
+    @Test
     public void mapShouldPutAllElementsFromAnotherMap() throws Exception {
         Map<Integer, Integer> map1 = new HashMap<>();
         Map<Integer, Integer> map2 = new HashMap<>();
