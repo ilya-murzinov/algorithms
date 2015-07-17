@@ -236,8 +236,8 @@ public class HashMapTest {
         map.put(new TestClass0(0), "value1");
         map.put(new TestClass0(1), "value2");
         map.put(new TestClass0(12), "value");
-        map.put(new TestClass0(1), "value3");
-        map.put(new TestClass0(1), "value4");
+        map.put(new TestClass0(3), "value3");
+        map.put(new TestClass0(4), "value4");
         String oldValue = map.remove(new TestClass0(12));
         assertEquals("value", oldValue);
     }
@@ -366,10 +366,16 @@ public class HashMapTest {
     @Test
     public void mapShouldClearCorrectly() throws Exception {
         Map<Integer, Integer> map = new HashMap<>();
+        int capacity = getCapacity(map);
+        map.clear();
+        assertEquals(0, map.size(), 0);
+        assertTrue(map.isEmpty());
+        assertEquals(capacity, getCapacity(map), 0);
+
         for (int i = 0; i < 1 << 10; i++) {
             map.put(i, i);
         }
-        int capacity = getCapacity(map);
+        capacity = getCapacity(map);
         map.clear();
         assertEquals(0, map.size(), 0);
         assertTrue(map.isEmpty());
