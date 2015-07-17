@@ -93,12 +93,12 @@ public class HashMap<K, V> implements Map<K, V> {
             HashMapEntry<K, V> hashMapEntry = buckets[index];
             while (hashMapEntry != null) {
                 if (key.equals(hashMapEntry.getKey())) {
+                    hashMapEntry.hash = hash;
                     return hashMapEntry.setValue(value);
                 }
                 hashMapEntry = hashMapEntry.next;
             }
             resize();
-            hash = hash(key.hashCode());
             index = indexFor(hash);
             addEntry(key, value, hash, index);
             size++;
@@ -141,8 +141,7 @@ public class HashMap<K, V> implements Map<K, V> {
     @Override
     public void putAll(Map<? extends K, ? extends V> m) {
         for (Map.Entry<? extends K, ? extends V> entry : m.entrySet()) {
-            int hash = hash(entry.hashCode());
-            addEntry(entry.getKey(), entry.getValue(), hash, indexFor(hash));
+            put(entry.getKey(), entry.getValue());
         }
     }
 
@@ -214,6 +213,7 @@ public class HashMap<K, V> implements Map<K, V> {
             int newCapacity = capacity << 1;
             HashMapEntry[] oldBuckets = buckets;
             buckets = new HashMapEntry[newCapacity];
+            size = 0;
             transfer(oldBuckets);
             capacity = newCapacity;
             threshold = (int) (capacity * loadFactor);
@@ -222,12 +222,10 @@ public class HashMap<K, V> implements Map<K, V> {
 
     private void transfer(HashMapEntry[] oldBuckets) {
         for (HashMapEntry<K, V> hashMapEntry : oldBuckets) {
-            if (hashMapEntry == null) {
-                continue;
+            while (hashMapEntry != null) {
+                put(hashMapEntry.key, hashMapEntry.value);
+                hashMapEntry = hashMapEntry.next;
             }
-
-            int index = indexFor(hashMapEntry.hash);
-            buckets[index] = hashMapEntry;
         }
     }
 
@@ -273,7 +271,7 @@ public class HashMap<K, V> implements Map<K, V> {
     private static final class HashMapEntry<K, V> implements Map.Entry<K, V> {
         private final K key;
         private V value;
-        private final int hash;
+        private int hash;
         private HashMapEntry<K, V> next;
 
         private HashMapEntry(K key, V value, int hash) {

@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -12,6 +13,8 @@ import static org.junit.Assert.*;
  * @author Ilya Murzinov
  */
 public class HashMapTest {
+
+    private Random random = new Random();
 
     @Test
     public void shouldBeAbleToConstructMapWithInitialCapacity() throws Exception {
@@ -181,7 +184,8 @@ public class HashMapTest {
     public void mapShouldResizeAfterReachedThreshold() throws Exception {
         Map<Integer, Integer> map = new HashMap<>(1 << 10, 0.5);
         for (int i = 0; i < (1 << 9) + 1; i++) {
-            map.put(i, i);
+            int integer = random.nextInt(1000);
+            map.put(i, integer);
         }
         assertEquals(1 << 11, getCapacity(map));
     }
@@ -240,6 +244,26 @@ public class HashMapTest {
         map.put(new TestClass0(4), "value4");
         String oldValue = map.remove(new TestClass0(12));
         assertEquals("value", oldValue);
+    }
+
+    @Test
+    public void mapShouldAddGetRemoveMultipleValues() throws Exception {
+        Map<String, String> map = new HashMap<>();
+        Set<String> values = new HashSet<>();
+        for (int i = 0; i < 1 << 4; i++) {
+            String value = String.valueOf(random.nextDouble());
+            if (!values.contains(value)) {
+                map.put(value, value);
+                values.add(value);
+            } else {
+                assertEquals(value, map.put(value, value));
+            }
+            System.out.println(value);
+        }
+
+        for (String value : values) {
+            assertEquals(value, map.get(value));
+        }
     }
 
     @Test
@@ -303,12 +327,12 @@ public class HashMapTest {
     public void mapShouldReturnCorrectEntrySetWithConstantHashCode() throws Exception {
         Map<TestClass42, Integer> map = new HashMap<>();
         Set<Integer> set = new HashSet<>();
-        for (int i = 0; i < 1 << 6; i++) {
+        for (int i = 0; i < 1 << 10; i++) {
             map.put(new TestClass42(i), i);
             set.add(i);
         }
 
-        assertEquals(1 << 6, map.entrySet().size());
+        assertEquals(1 << 10, map.entrySet().size());
 
         for (Map.Entry<TestClass42, Integer> entry : map.entrySet()) {
             assertTrue(set.contains(entry.getValue()));
@@ -345,22 +369,32 @@ public class HashMapTest {
     }
 
     @Test
+    public void mapShouldReturnCorrectSetsWhenEmpty() throws Exception {
+        Map<Integer, Integer> map = new HashMap<>();
+        assertTrue(map.entrySet().isEmpty());
+        assertTrue(map.keySet().isEmpty());
+        assertTrue(map.values().isEmpty());
+    }
+
+    @Test
     public void mapShouldPutAllElementsFromAnotherMap() throws Exception {
-        // Map<Integer, Integer> map1 = new HashMap<>();
-        // Map<Integer, Integer> map2 = new HashMap<>();
-        //
-        // for (int i = 0; i < 1 << 10; i++) {
-        // if (i % 2 == 0)
-        // map1.put(i, i);
-        // else
-        // map2.put(i, i);
-        // }
-        //
-        // map1.putAll(map2);
-        //
-        // for (int i = 0; i < 1 << 10; i++) {
-        // assertEquals(i, map1.get(i), 0);
-        // }
+        Map<Integer, Integer> map1 = new HashMap<>();
+        Map<Integer, Integer> map2 = new HashMap<>();
+
+        for (int i = 0; i < 1 << 6; i++) {
+            if (i % 2 == 0)
+                map1.put(i, i);
+            else
+                map2.put(i, i);
+        }
+
+        map1.putAll(map2);
+
+        for (int i = 0; i < 1 << 6; i++) {
+            Integer actual = map1.get(i);
+            assertNotNull(String.valueOf(i), actual);
+            assertEquals(i, actual, 0);
+        }
     }
 
     @Test
