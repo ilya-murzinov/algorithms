@@ -3,6 +3,8 @@ package com.github.ilyamurzinov.datastructures.maps;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -232,6 +234,8 @@ public class HashMapTest {
         map.put(new TestClass0(0), "value1");
         map.put(new TestClass0(1), "value2");
         map.put(new TestClass0(12), "value");
+        map.put(new TestClass0(1), "value3");
+        map.put(new TestClass0(1), "value4");
         String oldValue = map.remove(new TestClass0(12));
         assertEquals("value", oldValue);
     }
@@ -245,6 +249,66 @@ public class HashMapTest {
         for (int i = 0; i < 1 << 10; i++) {
             assertEquals("value" + i, map.get(new TestClass0(i)));
         }
+    }
+
+    @Test
+    public void mapShouldReturnCorrectEntrySet() throws Exception {
+        Map<Integer, Integer> map = new HashMap<>();
+        Set<Integer> set = new HashSet<>();
+        for (int i = 0; i < 1 << 10; i++) {
+            map.put(i, i);
+            set.add(i);
+        }
+
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            assertTrue(set.contains(entry.getValue()));
+            set.remove(entry.getValue());
+        }
+
+        assertTrue(set.isEmpty());
+    }
+
+    @Test
+    public void mapShouldReturnCorrectValues() throws Exception {
+        Map<Integer, Integer> map = new HashMap<>();
+        Set<Integer> set = new HashSet<>();
+        for (int i = 0; i < 1 << 10; i++) {
+            map.put(i, i);
+            set.add(i);
+        }
+
+        assertTrue(set.containsAll(map.values()) && map.values().containsAll(set));
+    }
+
+    @Test
+    public void mapShouldReturnCorrectKeySet() throws Exception {
+        Map<Integer, Integer> map = new HashMap<>();
+        Set<Integer> set = new HashSet<>();
+        for (int i = 0; i < 1 << 10; i++) {
+            map.put(i, i);
+            set.add(i);
+        }
+
+        assertTrue(set.containsAll(map.keySet()) && map.values().containsAll(set));
+    }
+
+    @Test
+    public void mapShouldPutAllElementsFromAnotherMap() throws Exception {
+//        Map<Integer, Integer> map1 = new HashMap<>();
+//        Map<Integer, Integer> map2 = new HashMap<>();
+//
+//        for (int i = 0; i < 1 << 10; i++) {
+//            if (i % 2 == 0)
+//                map1.put(i, i);
+//            else
+//                map2.put(i, i);
+//        }
+//
+//        map1.putAll(map2);
+//
+//        for (int i = 0; i < 1 << 10; i++) {
+//            assertEquals(i, map1.get(i), 0);
+//        }
     }
 
     private int getCapacity(HashMap map) throws Exception {
@@ -276,32 +340,6 @@ public class HashMapTest {
             TestClass0 testClass0 = (TestClass0) o;
 
             return i == testClass0.i;
-
-        }
-
-        @Override
-        public int hashCode() {
-            return 0;
-        }
-    }
-
-    class TestClass42 {
-        private int i;
-
-        TestClass42(int i) {
-            this.i = i;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-
-            TestClass42 testClass42 = (TestClass42) o;
-
-            return i == testClass42.i;
 
         }
 
