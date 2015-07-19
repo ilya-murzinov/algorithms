@@ -128,12 +128,12 @@ public class HashMap<K, V> implements Map<K, V> {
 
         previous = hashMapEntry;
         hashMapEntry = next;
-        next = next == null ? null : next.next;
+        next = next.next;
 
         while (hashMapEntry != null) {
             if (key == null ? hashMapEntry.key == null : key.equals(hashMapEntry.key)) {
                 V result = hashMapEntry.getValue();
-                previous.next = next == null ? null : next.next;
+                previous.next = next;
                 size--;
                 return result;
             }
