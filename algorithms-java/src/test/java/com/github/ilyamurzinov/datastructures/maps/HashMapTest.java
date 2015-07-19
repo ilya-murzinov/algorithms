@@ -102,6 +102,9 @@ public class HashMapTest {
         map.put(null, "value");
         String oldValue = map.remove(null);
         assertEquals("value", oldValue);
+        assertFalse(map.containsValue("value"));
+        assertFalse(map.containsKey(null));
+        assertNull(map.get(null));
     }
 
     @Test
@@ -154,6 +157,9 @@ public class HashMapTest {
         map.put(null, "value");
         String oldValue = map.remove(null);
         assertEquals("value", oldValue);
+        assertFalse(map.containsValue("value"));
+        assertFalse(map.containsKey(null));
+        assertNull(map.get(null));
     }
 
     @Test
@@ -178,6 +184,9 @@ public class HashMapTest {
         map.put("key", "value");
         String oldValue = map.remove("key");
         assertEquals("value", oldValue);
+        assertFalse(map.containsValue("value"));
+        assertFalse(map.containsKey("key"));
+        assertNull(map.get("key"));
     }
 
     @Test
@@ -244,6 +253,9 @@ public class HashMapTest {
         map.put(new TestClass0(4), "value4");
         String oldValue = map.remove(new TestClass0(12));
         assertEquals("value", oldValue);
+        assertFalse(map.containsValue("value"));
+        assertFalse(map.containsKey(new TestClass0(12)));
+        assertNull(map.get(new TestClass0(12)));
     }
 
     @Test
@@ -258,7 +270,6 @@ public class HashMapTest {
             } else {
                 assertEquals(value, map.put(value, value));
             }
-            System.out.println(value);
         }
 
         for (String value : values) {

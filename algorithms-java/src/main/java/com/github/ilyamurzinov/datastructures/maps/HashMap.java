@@ -116,6 +116,7 @@ public class HashMap<K, V> implements Map<K, V> {
             return null;
         }
 
+        HashMapEntry<K, V> previous;
         HashMapEntry<K, V> next = hashMapEntry.next;
 
         if (key == null ? hashMapEntry.key == null : key.equals(hashMapEntry.key)) {
@@ -125,13 +126,18 @@ public class HashMap<K, V> implements Map<K, V> {
             return result;
         }
 
+        previous = hashMapEntry;
+        hashMapEntry = next;
+        next = next == null ? null : next.next;
+
         while (hashMapEntry != null) {
             if (key == null ? hashMapEntry.key == null : key.equals(hashMapEntry.key)) {
                 V result = hashMapEntry.getValue();
-                hashMapEntry.next = next == null ? null : next.next;
+                previous.next = next == null ? null : next.next;
                 size--;
                 return result;
             }
+            previous = hashMapEntry;
             hashMapEntry = next;
             next = next == null ? null : next.next;
         }
@@ -160,7 +166,7 @@ public class HashMap<K, V> implements Map<K, V> {
         return new AbstractSet<K>() {
             @Override
             public Iterator<K> iterator() {
-                return new KeysIterator(buckets);
+                return new KeysIterator<>(buckets);
             }
 
             @Override
@@ -190,7 +196,7 @@ public class HashMap<K, V> implements Map<K, V> {
         return new AbstractSet<HashMapEntry<K, V>>() {
             @Override
             public Iterator iterator() {
-                return new EntryIterator(buckets);
+                return new EntryIterator<>(buckets);
             }
 
             @Override
@@ -211,7 +217,7 @@ public class HashMap<K, V> implements Map<K, V> {
     private void resize() {
         if (size + 1 >= threshold) {
             int newCapacity = capacity << 1;
-            HashMapEntry[] oldBuckets = buckets;
+            HashMapEntry<K, V>[] oldBuckets = buckets;
             buckets = new HashMapEntry[newCapacity];
             size = 0;
             transfer(oldBuckets);
@@ -220,7 +226,7 @@ public class HashMap<K, V> implements Map<K, V> {
         }
     }
 
-    private void transfer(HashMapEntry[] oldBuckets) {
+    private void transfer(HashMapEntry<K, V>[] oldBuckets) {
         for (HashMapEntry<K, V> hashMapEntry : oldBuckets) {
             while (hashMapEntry != null) {
                 put(hashMapEntry.key, hashMapEntry.value);
