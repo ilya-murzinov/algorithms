@@ -3,20 +3,27 @@ package com.github.ilyamurzinov.datastructures.trees
 /**
  * @author ilya-murzinov
  */
-abstract sealed class BinomialTree[T] {
-  def rootNode: Node[T]
+case class BinomialTree[T] private (rootNode: Node[T]) {
   def order: Int = rootNode.degree
   def root: T = rootNode.value
   def merge(that: BinomialTree[T]): BinomialTree[T] = {
     if (order != that.order) throw new IllegalArgumentException
     else {
       val newChildrenRoot: Branch[T] =
-        new Branch[T](that.root, that.order, rootNode, that.rootNode.childrenRoot)
+        new Branch[T](that.root, that.order, that.rootNode.childrenRoot, rootNode.childrenRoot)
 
-      BinomialTree.make(root, order + 1, newChildrenRoot, Leaf)
+      new BinomialTree(new Branch[T](root, order + 1, newChildrenRoot, Leaf))
     }
   }
-  def :+:(that: BinomialTree[T]): BinomialTree[T] = merge(that)
+  def deleteRoot(): List[BinomialTree[T]] = {
+    def get(node: Node[T], acc: List[BinomialTree[T]]): List[BinomialTree[T]] = node match {
+      case Leaf => acc
+      case Branch(v, d, c, s) =>
+        get(node.siblingRoot, acc) :+ new BinomialTree[T](new Branch(v, d, c, Leaf))
+    }
+
+    get(rootNode.childrenRoot, Nil)
+  }
 }
 
 trait Node[+T] {
@@ -33,15 +40,8 @@ case object Leaf extends Node[Nothing] {
   def siblingRoot: Node[Nothing] = throw new NoSuchElementException
 }
 
-case class Branch[T] (value: T, degree: Int, childrenRoot: Node[T], siblingRoot: Node[T]) extends Node[T]
+case class Branch[T](value: T, degree: Int, childrenRoot: Node[T], siblingRoot: Node[T]) extends Node[T]
 
 object BinomialTree {
-  private[BinomialTree] def make[T](value: T, degree: Int,
-                                    childrenRoot: Node[T], siblingRoot: Node[T]): BinomialTree[T] = {
-    new BinomialTree[T] {
-      val rootNode: Node[T] = new Branch[T](value, degree, childrenRoot, siblingRoot)
-    }
-  }
-
-  def apply[T](value: T): BinomialTree[T] = make(value, 1, Leaf, Leaf)
+  def apply[T](value: T): BinomialTree[T] = new BinomialTree[T](new Branch[T](value, 0, Leaf, Leaf))
 }
