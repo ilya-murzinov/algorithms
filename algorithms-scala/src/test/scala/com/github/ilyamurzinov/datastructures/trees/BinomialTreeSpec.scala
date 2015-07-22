@@ -21,11 +21,22 @@ class BinomialTreeSpec extends FlatSpec with Matchers {
     tree.root shouldBe 21
   }
 
+  "A binomial tree" should "not merge tree of different order" in {
+    intercept[IllegalArgumentException] {
+      BinomialTree(21) merge BinomialTree(42) merge BinomialTree(11)
+    }
+  }
+
   "A binomial tree of order 1" should "merge with another binomial tree of order 1 successfully" in {
     val tree: BinomialTree[Int] =
       (BinomialTree(42) merge BinomialTree(21)) merge (BinomialTree(11) merge BinomialTree(14))
     tree.order shouldBe 2
     tree.root shouldBe 42
+  }
+
+  "A binomial tree" should "delete root in tree of order 0" in {
+    val trees: List[BinomialTree[Int]] = BinomialTree(42).deleteRoot()
+    trees shouldBe Nil
   }
 
   "A binomial tree" should "delete root in tree of order 1" in {
